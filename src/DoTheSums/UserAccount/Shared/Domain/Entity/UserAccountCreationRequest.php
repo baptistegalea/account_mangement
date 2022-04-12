@@ -6,7 +6,9 @@ namespace App\DoTheSums\UserAccount\Shared\Domain\Entity;
 
 use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Email;
+use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\HashedPassword;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\OneTimePassword;
+use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Salt;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\CustomIdGenerator;
 use Doctrine\ORM\Mapping\Entity;
@@ -29,6 +31,9 @@ class UserAccountCreationRequest
     #[Column(type: "text", nullable: false)]
     private string $hashedPassword;
 
+    #[Column(type: "salt", nullable: false)]
+    private Salt $salt;
+
     #[Column(type: "not_empty_name", nullable: false)]
     private NotEmptyName $name;
 
@@ -38,11 +43,12 @@ class UserAccountCreationRequest
     #[Column(type: "datetime", nullable: false)]
     private \DateTime $requestedAt;
 
-    public function __construct(Email $email, string $hashedPassword, NotEmptyName $name, OneTimePassword $oneTimePassword, \DateTimeImmutable $requestedAt)
+    public function __construct(Email $email, HashedPassword $hashedPassword, NotEmptyName $name, OneTimePassword $oneTimePassword, \DateTimeImmutable $requestedAt)
     {
         $this->ulid = new Ulid();
         $this->email = $email;
-        $this->hashedPassword = $hashedPassword;
+        $this->hashedPassword = $hashedPassword->getHashedPassword();
+        $this->salt = $hashedPassword->getSalt();
         $this->name = $name;
         $this->oneTimePassword = OneTimePassword::create();
         $this->requestedAt = \DateTime::createFromImmutable($requestedAt);
@@ -67,6 +73,16 @@ class UserAccountCreationRequest
     public function getHashedPassword(): string
     {
         return $this->hashedPassword;
+    }
+
+    public function getSalt(): Salt
+    {
+        return $this->salt;
+    }
+
+    public function getRequestedAt(): \DateTimeImmutable
+    {
+        return \DateTimeImmutable::createFromMutable($this->requestedAt);
     }
 
     public function getName(): NotEmptyName

@@ -6,6 +6,7 @@ namespace App\DoTheSums\UserAccount\Shared\Domain\Entity;
 
 use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Email;
+use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Salt;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\CustomIdGenerator;
 use Doctrine\ORM\Mapping\Entity;
@@ -28,23 +29,42 @@ class UserAccount
     #[Column(type: "text", nullable: false)]
     private string $hashedPassword;
 
+    #[Column(type: "salt", nullable: false)]
+    private Salt $salt;
+
     #[Column(type: "not_empty_name", nullable: false)]
     private NotEmptyName $name;
 
     #[Column(type: "datetime", nullable: false)]
     private \DateTime $registeredAt;
 
-    private function __construct(Email $email, string $hashedPassword, NotEmptyName $name, \DateTimeImmutable $registeredAt)
+    private function __construct(Email $email, string $hashedPassword, Salt $salt, NotEmptyName $name, \DateTimeImmutable $registeredAt)
     {
         $this->ulid = new Ulid();
         $this->email = $email;
         $this->hashedPassword = $hashedPassword;
         $this->name = $name;
         $this->registeredAt = \DateTime::createFromImmutable($registeredAt);
+        $this->salt = $salt;
     }
 
     public static function fromUserAccountCreationRequest(UserAccountCreationRequest $accountCreationRequest, \DateTimeImmutable $registeredAt): self
     {
-        return new self($accountCreationRequest->getEmail(), $accountCreationRequest->getHashedPassword(), $accountCreationRequest->getName(), $registeredAt);
+        return new self($accountCreationRequest->getEmail(), $accountCreationRequest->getHashedPassword(), $accountCreationRequest->getSalt(), $accountCreationRequest->getName(), $registeredAt);
+    }
+
+    public function getHashedPassword(): string
+    {
+        return $this->hashedPassword;
+    }
+
+    public function getSalt(): Salt
+    {
+        return $this->salt;
+    }
+
+    public function getEmail(): Email
+    {
+        return $this->email;
     }
 }

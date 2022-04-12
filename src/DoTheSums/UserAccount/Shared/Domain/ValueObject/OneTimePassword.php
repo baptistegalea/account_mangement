@@ -23,13 +23,13 @@ final class OneTimePassword
         return new self((string) \random_int(100000, 999999));
     }
 
-    public function value(): string
+    public function getValue(): string
     {
         return $this->value;
     }
 
     public function equals(self $oneTimePassword): bool
     {
-        return $this->value === $oneTimePassword->value();
+        return $this->value === $oneTimePassword->getValue();
     }
 }

@@ -6,6 +6,7 @@ doctrine:
             not_empty_name: App\DoTheSums\Household\Shared\Infrastructure\Doctrine\DBAL\Types\NotEmptyNameType
             email: App\DoTheSums\UserAccount\Shared\Infrastructure\Doctrine\DBAL\Types\EmailType
             one_time_password: App\DoTheSums\UserAccount\Shared\Infrastructure\Doctrine\DBAL\Types\OneTimePasswordType
+            salt: App\DoTheSums\UserAccount\Shared\Infrastructure\Doctrine\DBAL\Types\SaltType
 
 
         # IMPORTANT: You MUST configure your server version,

@@ -4,34 +4,28 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\UserAccount\Shared\Infrastructure\Doctrine\DBAL\Types;
 
-use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\OneTimePassword;
+use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Salt;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 
-final class OneTimePasswordType extends Type
+final class SaltType extends Type
 {
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        if ($value === null) {
-            return null;
-        }
-
-        if ($value instanceof OneTimePassword) {
+        if ($value instanceof Salt) {
             return $value->getValue();
         }
 
         throw ConversionException::conversionFailedInvalidType(
             $value,
             $this->getName(),
-            ['null', OneTimePassword::class]
+            ['null', Salt::class]
         );
     }
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        $column['length'] = 8;
-
         return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
@@ -41,12 +35,12 @@ final class OneTimePasswordType extends Type
             return null;
         }
 
-        return OneTimePassword::fromString($value);
+        return Salt::fromString($value);
     }
 
     public function getName(): string
     {
-        return 'one_time_password';
+        return 'salt';
     }
 
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool

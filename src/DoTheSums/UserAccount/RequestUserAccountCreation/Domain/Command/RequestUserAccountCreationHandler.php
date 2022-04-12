@@ -8,7 +8,9 @@ use App\DoTheSums\UserAccount\RequestUserAccountCreation\Domain\Output\RequestUs
 use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
 use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccountCreationRequest;
 use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepositoryInterface;
+use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\HashedPassword;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\OneTimePassword;
+use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Salt;
 use App\DoTheSums\UserAccount\Shared\Infrastructure\Repository\UserAccountCreationRequestRepository;
 
 final class RequestUserAccountCreationHandler
@@ -18,7 +20,6 @@ final class RequestUserAccountCreationHandler
 
     public function __construct(UserAccountCreationRequestRepository $userAccountCreationRequestRepository, UserAccountRepositoryInterface $userAccountRepository)
     {
-
         $this->userAccountCreationRequestRepository = $userAccountCreationRequestRepository;
         $this->userAccountRepository = $userAccountRepository;
     }
@@ -31,9 +32,17 @@ final class RequestUserAccountCreationHandler
             throw new \Exception('A user with this mail already exist');
         }
 
+        $salt = Salt::generate();
+
+        $hashedPassword = HashedPassword::create(
+            $requestUserAccountCreation->getPassword()->getValue(),
+            $salt,
+            'MySuperSecretToChange!!'
+        );
+
         $userAccountCreationRequest = new UserAccountCreationRequest(
             $requestUserAccountCreation->getEmail(),
-            $requestUserAccountCreation->getPassword()->getHashedValue(),
+            $hashedPassword,
             $requestUserAccountCreation->getName(),
             OneTimePassword::create(),
             $requestUserAccountCreation->getRequestedAt()
