@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\DoTheSums\Household\Shared\Domain\Entity;
 
 use App\DoTheSums\Household\Shared\Domain\ValueObject\Amount;
-use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
 use App\DoTheSums\Shared\Domain\Entity\UserAccount;
+use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -81,6 +81,21 @@ class Household
         $contributor->registerNewExpense($amount, $description, $registeredAt);
     }
 
+    public function addContributor(NotEmptyName $contributorName): void
+    {
+        $isContributorExists = $this->contributors->exists(
+            static fn (int $key, Contributor $contributor): bool => $contributor->getName()->equals($contributorName)
+        );
+
+        if ($isContributorExists === true) {
+            throw new \Exception('A contributor already exists with the same name');
+        }
+
+        $this->contributors->add(
+            new Contributor($this, $contributorName)
+        );
+    }
+
     /**
      * @return array<string, float>
      */
@@ -104,6 +119,11 @@ class Household
         ];
     }
 
+    public function getCreator(): UserAccount
+    {
+        return $this->creator;
+    }
+
     private function getContributor(Ulid $contributorUlid): Contributor
     {
         $results = $this->contributors->filter(
@@ -115,10 +135,5 @@ class Household
         }
 
         return $results->first();
-    }
-
-    public function getCreator(): UserAccount
-    {
-        return $this->creator;
     }
 }

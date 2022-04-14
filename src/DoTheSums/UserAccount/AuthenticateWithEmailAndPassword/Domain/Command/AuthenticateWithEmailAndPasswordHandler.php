@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Domain\Command;
 
-use App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Domain\Service\JWTIssuer;
 use App\DoTheSums\Shared\Domain\Entity\UserAccount;
+use App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Domain\Service\JWTIssuer;
 use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepository;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\HashedPassword;
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\Household\OpenNewHousehold\Domain\Command;
 
-use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepository;
 use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepository;
 
 final class OpenNewHouseholdHandler

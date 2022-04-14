@@ -35,6 +35,14 @@ logs: ## Show live logs
 sh: ## Connect to the PHP FPM container
 	@$(PHP_CONT) sh
 
+tests:
+	@$(PHP_CONT) vendor/bin/phpinsights -n
+	@$(PHP_CONT) vendor/bin/phpstan --level=8 analyse src
+
+phpinsights-fix:
+	@$(PHP_CONT) vendor/bin/phpinsights -n --fix
+
+
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
 	@$(eval c ?=)
