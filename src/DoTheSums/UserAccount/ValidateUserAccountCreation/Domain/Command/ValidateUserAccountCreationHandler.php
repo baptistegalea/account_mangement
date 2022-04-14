@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\DoTheSums\UserAccount\ValidateUserAccountCreation\Domain\Command;
 
 use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
-use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountCreationRequestRepositoryInterface;
-use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepositoryInterface;
+use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountCreationRequestRepository;
+use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepository;
 
 final class ValidateUserAccountCreationHandler
 {
-    private UserAccountCreationRequestRepositoryInterface $userAccountCreationRequestRepository;
-    private UserAccountRepositoryInterface $userAccountRepository;
+    private UserAccountCreationRequestRepository $userAccountCreationRequestRepository;
+    private UserAccountRepository $userAccountRepository;
 
-    public function __construct(UserAccountCreationRequestRepositoryInterface $userAccountCreationRequestRepository, UserAccountRepositoryInterface $userAccountRepository)
+    public function __construct(UserAccountCreationRequestRepository $userAccountCreationRequestRepository, UserAccountRepository $userAccountRepository)
     {
         $this->userAccountCreationRequestRepository = $userAccountCreationRequestRepository;
         $this->userAccountRepository = $userAccountRepository;

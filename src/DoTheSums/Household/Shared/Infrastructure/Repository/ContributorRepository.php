@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\DoTheSums\Household\Shared\Infrastructure\Repository;
 
 use App\DoTheSums\Household\Shared\Domain\Entity\Contributor;
-use App\DoTheSums\Household\Shared\Domain\Repository\ContributorRepositoryInterface;
+use App\DoTheSums\Household\Shared\Domain\Repository\ContributorRepository as ContributorRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Uid\Ulid;
 
@@ -21,7 +21,7 @@ final class ContributorRepository implements ContributorRepositoryInterface
     public function getByUlid(Ulid $ulid): Contributor
     {
         $contributor = $this->entityManager->getRepository(Contributor::class)->findOneBy([
-            'ulid' => $ulid
+            'ulid' => $ulid,
         ]);
 
         if ($contributor instanceof Contributor === false) {

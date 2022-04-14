@@ -16,11 +16,14 @@ final class HttpInputResolver implements ArgumentValueResolverInterface
 {
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        $fqcn = (string)$argument->getType();
+        $fqcn = (string) $argument->getType();
 
-        return (str_contains($fqcn, 'Presentation\\Http\\') && str_ends_with($fqcn, 'Input'));
+        return str_contains($fqcn, 'Presentation\\Http\\') && str_ends_with($fqcn, 'Input');
     }
 
+    /**
+     * @return iterable<object>
+     */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         $normalizer = new ObjectNormalizer();
@@ -28,7 +31,7 @@ final class HttpInputResolver implements ArgumentValueResolverInterface
 
         yield $serializer->deserialize(
             $request->getContent(),
-            (string)$argument->getType(),
+            (string) $argument->getType(),
             'json'
         );
     }

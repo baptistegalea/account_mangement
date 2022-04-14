@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Domain\Command;
 
-use App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Domain\Service\JWTIssuerInterface;
+use App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Domain\Service\JWTIssuer;
 use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
-use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepositoryInterface;
+use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepository;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\HashedPassword;
 
 final class AuthenticateWithEmailAndPasswordHandler
 {
-    private UserAccountRepositoryInterface $userAccountRepository;
-    private JWTIssuerInterface $JWTIssuer;
+    private UserAccountRepository $userAccountRepository;
+    private JWTIssuer $JWTIssuer;
 
-    public function __construct(UserAccountRepositoryInterface $userAccountRepository, JWTIssuerInterface $JWTIssuer)
+    public function __construct(UserAccountRepository $userAccountRepository, JWTIssuer $JWTIssuer)
     {
         $this->userAccountRepository = $userAccountRepository;
         $this->JWTIssuer = $JWTIssuer;

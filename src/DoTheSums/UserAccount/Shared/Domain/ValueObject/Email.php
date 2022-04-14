@@ -15,7 +15,7 @@ final class Email
 
     public static function fromString(string $email): self
     {
-        if (false === \filter_var($email, FILTER_VALIDATE_EMAIL)){
+        if (\filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             throw new \InvalidArgumentException('This value is not a valid email');
         }
         return new self($email);

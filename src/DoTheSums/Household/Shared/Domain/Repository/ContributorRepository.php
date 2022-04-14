@@ -7,7 +7,7 @@ namespace App\DoTheSums\Household\Shared\Domain\Repository;
 use App\DoTheSums\Household\Shared\Domain\Entity\Contributor;
 use Symfony\Component\Uid\Ulid;
 
-interface ContributorRepositoryInterface
+interface ContributorRepository
 {
     public function getByUlid(Ulid $ulid): Contributor;
 

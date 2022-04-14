@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\Household\RegisterExpense\Domain\Command;
 
-use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepositoryInterface;
+use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepository;
 
 final class RegisterExpenseHandler
 {
-    private HouseholdRepositoryInterface $householdRepository;
+    private HouseholdRepository $householdRepository;
 
-    public function __construct(HouseholdRepositoryInterface $householdRepository)
+    public function __construct(HouseholdRepository $householdRepository)
     {
         $this->householdRepository = $householdRepository;
     }

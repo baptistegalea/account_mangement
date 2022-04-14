@@ -9,7 +9,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 
-class EmailType extends Type
+final class EmailType extends Type
 {
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {

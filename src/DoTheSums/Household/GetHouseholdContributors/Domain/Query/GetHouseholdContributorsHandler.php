@@ -6,13 +6,13 @@ namespace App\DoTheSums\Household\GetHouseholdContributors\Domain\Query;
 
 use App\DoTheSums\Household\GetHouseholdContributors\Domain\Output\Contributor;
 use App\DoTheSums\Household\GetHouseholdContributors\Domain\Output\GetHouseholdContributorsOutput;
-use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepositoryInterface;
+use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepository;
 
 final class GetHouseholdContributorsHandler
 {
-    private HouseholdRepositoryInterface $householdRepository;
+    private HouseholdRepository $householdRepository;
 
-    public function __construct(HouseholdRepositoryInterface $householdRepository)
+    public function __construct(HouseholdRepository $householdRepository)
     {
         $this->householdRepository = $householdRepository;
     }
@@ -21,14 +21,15 @@ final class GetHouseholdContributorsHandler
     {
         $household = $this->householdRepository->getByUlid($query->getHouseholdUlid());
 
-        $output = new GetHouseholdContributorsOutput();
+        $contributors = [];
         foreach ($household->getContributors() as $contributorEntity) {
-            $contributor = new Contributor();
-            $contributor->ulid = $contributorEntity->getUlid()->toRfc4122();
-            $contributor->name = $contributorEntity->getName()->getValue();
-            $output->contributors[] = $contributor;
+            $contributor = new Contributor(
+                $contributorEntity->getUlid()->toRfc4122(),
+                $contributorEntity->getName()->getValue()
+            );
+            $contributors[] = $contributor;
         }
 
-        return $output;
+        return new GetHouseholdContributorsOutput($contributors);
     }
 }

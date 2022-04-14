@@ -9,5 +9,21 @@ final class GetHouseholdContributorsOutput
     /**
      * @var array<Contributor>
      */
-    public array $contributors;
+    private array $contributors;
+
+    /**
+     * @param array<Contributor> $contributors
+     */
+    public function __construct(array $contributors)
+    {
+        $this->contributors = $contributors;
+    }
+
+    /**
+     * @return array<Contributor>
+     */
+    public function getContributors(): array
+    {
+        return $this->contributors;
+    }
 }

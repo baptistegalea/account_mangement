@@ -7,7 +7,7 @@ namespace App\DoTheSums\UserAccount\RequestUserAccountCreation\Domain\Command;
 use App\DoTheSums\UserAccount\RequestUserAccountCreation\Domain\Output\RequestUserAccountCreationOutput;
 use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
 use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccountCreationRequest;
-use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepositoryInterface;
+use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepository;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\HashedPassword;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\OneTimePassword;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Salt;
@@ -16,9 +16,9 @@ use App\DoTheSums\UserAccount\Shared\Infrastructure\Repository\UserAccountCreati
 final class RequestUserAccountCreationHandler
 {
     private UserAccountCreationRequestRepository $userAccountCreationRequestRepository;
-    private UserAccountRepositoryInterface $userAccountRepository;
+    private UserAccountRepository $userAccountRepository;
 
-    public function __construct(UserAccountCreationRequestRepository $userAccountCreationRequestRepository, UserAccountRepositoryInterface $userAccountRepository)
+    public function __construct(UserAccountCreationRequestRepository $userAccountCreationRequestRepository, UserAccountRepository $userAccountRepository)
     {
         $this->userAccountCreationRequestRepository = $userAccountCreationRequestRepository;
         $this->userAccountRepository = $userAccountRepository;
@@ -52,8 +52,6 @@ final class RequestUserAccountCreationHandler
 
 //        $this->emailService->send($email);
 
-        $output = new RequestUserAccountCreationOutput();
-        $output->ulid = $userAccountCreationRequest->getUlid()->toRfc4122();
-        return $output;
+        return new RequestUserAccountCreationOutput($userAccountCreationRequest->getUlid()->toRfc4122());
     }
 }

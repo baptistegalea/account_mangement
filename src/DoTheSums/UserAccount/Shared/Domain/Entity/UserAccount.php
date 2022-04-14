@@ -26,22 +26,23 @@ class UserAccount
     #[CustomIdGenerator(class: 'doctrine.ulid_generator')]
     private Ulid $ulid;
 
-    #[Column(type: "email", unique: true, nullable: false)]
+    #[Column(type: 'email', unique: true, nullable: false)]
     private Email $email;
 
-    #[Column(type: "text", nullable: false)]
+    #[Column(type: 'text', nullable: false)]
     private string $hashedPassword;
 
-    #[Column(type: "salt", nullable: false)]
+    #[Column(type: 'salt', nullable: false)]
     private Salt $salt;
 
-    #[Column(type: "not_empty_name", nullable: false)]
+    #[Column(type: 'not_empty_name', nullable: false)]
     private NotEmptyName $name;
 
-    #[Column(type: "datetime", nullable: false)]
+    #[Column(type: 'datetime', nullable: false)]
     private \DateTime $registeredAt;
 
-    #[OneToMany(mappedBy: "creator", targetEntity: Household::class)]
+    /** @var Collection<int,Household> */
+    #[OneToMany(mappedBy: 'creator', targetEntity: Household::class)]
     private Collection $households;
 
     private function __construct(Email $email, string $hashedPassword, Salt $salt, NotEmptyName $name, \DateTimeImmutable $registeredAt)
@@ -87,5 +88,18 @@ class UserAccount
     public function getName(): NotEmptyName
     {
         return $this->name;
+    }
+
+    public function getRegisteredAt(): \DateTimeImmutable
+    {
+        return \DateTimeImmutable::createFromMutable($this->registeredAt);
+    }
+
+    /**
+     * @return array<Household>
+     */
+    public function getHouseholds(): array
+    {
+        return $this->households->toArray();
     }
 }

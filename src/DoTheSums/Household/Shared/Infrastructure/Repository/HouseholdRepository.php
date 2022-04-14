@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\DoTheSums\Household\Shared\Infrastructure\Repository;
 
 use App\DoTheSums\Household\Shared\Domain\Entity\Household;
-use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepositoryInterface;
+use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepository as HouseholdRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Uid\Ulid;
 
@@ -27,7 +27,7 @@ final class HouseholdRepository implements HouseholdRepositoryInterface
     public function getByUlid(Ulid $ulid): Household
     {
         $household = $this->entityManager->getRepository(Household::class)->findOneBy([
-            'ulid' => $ulid
+            'ulid' => $ulid,
         ]);
 
         if ($household instanceof Household === false) {

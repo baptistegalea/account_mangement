@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\Household\OpenNewHousehold\Domain\Command;
 
-use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepositoryInterface;
-use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepositoryInterface;
+use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepository;
+use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepository;
 
 final class OpenNewHouseholdHandler
 {
-    private HouseholdRepositoryInterface $householdRepository;
-    private UserAccountRepositoryInterface $userAccountRepository;
+    private HouseholdRepository $householdRepository;
+    private UserAccountRepository $userAccountRepository;
 
-    public function __construct(HouseholdRepositoryInterface $householdRepository, UserAccountRepositoryInterface $userAccountRepository)
+    public function __construct(HouseholdRepository $householdRepository, UserAccountRepository $userAccountRepository)
     {
         $this->householdRepository = $householdRepository;
         $this->userAccountRepository = $userAccountRepository;

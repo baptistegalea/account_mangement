@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Infrastructure\Service;
 
-use App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Domain\Service\JWTIssuerInterface;
+use App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Domain\Service\JWTIssuer as JWTIssuerInterface;
 use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
@@ -19,7 +19,7 @@ final class JWTIssuer implements JWTIssuerInterface
             InMemory::plainText('MySuperHashKey!!')
         );
 
-        $now   = new \DateTimeImmutable();
+        $now = new \DateTimeImmutable();
         $token = $configuration->builder()
             ->issuedAt($now)
             ->expiresAt($now->modify('+24 hours'))

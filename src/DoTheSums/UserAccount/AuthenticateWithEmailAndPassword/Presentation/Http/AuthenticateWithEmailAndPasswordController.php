@@ -20,9 +20,10 @@ final class AuthenticateWithEmailAndPasswordController extends AbstractControlle
     {
         $jwt = $handler->handle(
             new AuthenticateWithEmailAndPassword(
-                Email::fromString($registerExpenseInput->email),
-                $registerExpenseInput->password
-            ));
+                Email::fromString($registerExpenseInput->getEmail()),
+                $registerExpenseInput->getPassword()
+            )
+        );
 
         return new JsonResponse(['jwt' => $jwt]);
     }

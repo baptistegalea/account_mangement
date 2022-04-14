@@ -7,7 +7,7 @@ namespace App\DoTheSums\UserAccount\Shared\Domain\Repository;
 use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccountCreationRequest;
 use Symfony\Component\Uid\Ulid;
 
-interface UserAccountCreationRequestRepositoryInterface
+interface UserAccountCreationRequestRepository
 {
     public function getByUlid(Ulid $ulid): UserAccountCreationRequest;
 

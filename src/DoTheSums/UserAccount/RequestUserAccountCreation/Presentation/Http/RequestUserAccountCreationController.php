@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class RequestUserAccountCreationController  extends AbstractController
+final class RequestUserAccountCreationController extends AbstractController
 {
     /**
      * @Route(path="/user-account-creation-requests", methods={"POST"})
@@ -22,11 +22,12 @@ final class RequestUserAccountCreationController  extends AbstractController
     {
         $output = $handler->handle(
             new RequestUserAccountCreation(
-                Email::fromString($requestUserAccountCreationInput->email),
-                NotEmptyName::fromString($requestUserAccountCreationInput->name),
-                Password::fromString($requestUserAccountCreationInput->password),
+                Email::fromString($requestUserAccountCreationInput->getEmail()),
+                NotEmptyName::fromString($requestUserAccountCreationInput->getName()),
+                Password::fromString($requestUserAccountCreationInput->getPassword()),
                 new \DateTimeImmutable(),
-            ));
+            )
+        );
 
         return new JsonResponse($output);
     }

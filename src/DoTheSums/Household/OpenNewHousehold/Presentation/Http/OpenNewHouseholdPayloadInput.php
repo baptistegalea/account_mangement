@@ -6,5 +6,15 @@ namespace App\DoTheSums\Household\OpenNewHousehold\Presentation\Http;
 
 final class OpenNewHouseholdPayloadInput
 {
-    public string $name;
+    private string $name;
+
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
 }

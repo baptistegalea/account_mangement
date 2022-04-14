@@ -29,7 +29,5 @@ final class AuthUserAccountStorage
         }
 
         return $user->getUserAccount();
-
     }
-
 }

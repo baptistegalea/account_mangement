@@ -28,14 +28,15 @@ class Household
     #[CustomIdGenerator(class: 'doctrine.ulid_generator')]
     private Ulid $ulid;
 
-    #[Column(type: "not_empty_name", nullable: false)]
+    #[Column(type: 'not_empty_name', nullable: false)]
     private NotEmptyName $name;
 
-    #[OneToMany(mappedBy: "household", targetEntity: Contributor::class, cascade: ["persist" => "persist"])]
+    /** @var Collection<int,Contributor>  */
+    #[OneToMany(mappedBy: 'household', targetEntity: Contributor::class, cascade: ['persist' => 'persist'])]
     private Collection $contributors;
 
-    #[ManyToOne(targetEntity: UserAccount::class, inversedBy: "households")]
-    #[JoinColumn(name: "creator_ulid", referencedColumnName: "ulid", nullable: false)]
+    #[ManyToOne(targetEntity: UserAccount::class, inversedBy: 'households')]
+    #[JoinColumn(name: 'creator_ulid', referencedColumnName: 'ulid', nullable: false)]
     private UserAccount $creator;
 
     private function __construct(NotEmptyName $name, UserAccount $creator)
@@ -74,25 +75,15 @@ class Household
         return $this->contributors->toArray();
     }
 
-    private function getContributor(Ulid $contributorUlid): Contributor
-    {
-        $results = $this->contributors->filter(
-            static fn(Contributor $contributor): bool => $contributor->getUlid()->equals($contributorUlid)
-        );
-
-        if ($results->first() instanceof Contributor === false) {
-            throw new \Exception('Contributor does not exist in this household');
-        }
-
-        return $results->first();
-    }
-
     public function registerExpense(Ulid $contributorUlid, Amount $amount, NotEmptyName $description, \DateTimeImmutable $registeredAt): void
     {
         $contributor = $this->getContributor($contributorUlid);
         $contributor->registerNewExpense($amount, $description, $registeredAt);
     }
 
+    /**
+     * @return array<string, float>
+     */
     public function getBalance(): array
     {
         /** @var Contributor $firstContributor */
@@ -111,5 +102,23 @@ class Household
             'firstContributorDebt' => $firstContributorBalance > 0 ? $firstContributorBalance : 0,
             'secondContributorDebt' => $secondContributorBalance > 0 ? $secondContributorBalance : 0,
         ];
+    }
+
+    private function getContributor(Ulid $contributorUlid): Contributor
+    {
+        $results = $this->contributors->filter(
+            static fn (Contributor $contributor): bool => $contributor->getUlid()->equals($contributorUlid)
+        );
+
+        if ($results->first() instanceof Contributor === false) {
+            throw new \Exception('Contributor does not exist in this household');
+        }
+
+        return $results->first();
+    }
+
+    public function getCreator(): UserAccount
+    {
+        return $this->creator;
     }
 }

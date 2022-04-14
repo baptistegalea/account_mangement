@@ -25,22 +25,22 @@ class UserAccountCreationRequest
     #[CustomIdGenerator(class: 'doctrine.ulid_generator')]
     private Ulid $ulid;
 
-    #[Column(type: "email", nullable: false)]
+    #[Column(type: 'email', nullable: false)]
     private Email $email;
 
-    #[Column(type: "text", nullable: false)]
+    #[Column(type: 'text', nullable: false)]
     private string $hashedPassword;
 
-    #[Column(type: "salt", nullable: false)]
+    #[Column(type: 'salt', nullable: false)]
     private Salt $salt;
 
-    #[Column(type: "not_empty_name", nullable: false)]
+    #[Column(type: 'not_empty_name', nullable: false)]
     private NotEmptyName $name;
 
-    #[Column(type: "one_time_password", nullable: false)]
+    #[Column(type: 'one_time_password', nullable: false)]
     private OneTimePassword $oneTimePassword;
 
-    #[Column(type: "datetime", nullable: false)]
+    #[Column(type: 'datetime', nullable: false)]
     private \DateTime $requestedAt;
 
     public function __construct(Email $email, HashedPassword $hashedPassword, NotEmptyName $name, OneTimePassword $oneTimePassword, \DateTimeImmutable $requestedAt)

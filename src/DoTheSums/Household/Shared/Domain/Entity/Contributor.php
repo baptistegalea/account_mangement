@@ -27,14 +27,15 @@ class Contributor
     #[CustomIdGenerator(class: 'doctrine.ulid_generator')]
     private Ulid $ulid;
 
-    #[Column(type: "not_empty_name", length: 255, nullable: false)]
+    #[Column(type: 'not_empty_name', length: 255, nullable: false)]
     private NotEmptyName $name;
 
-    #[ManyToOne(targetEntity: Household::class, inversedBy: "contributors")]
-    #[JoinColumn(name: "household_ulid", referencedColumnName: "ulid", nullable: false)]
+    #[ManyToOne(targetEntity: Household::class, inversedBy: 'contributors')]
+    #[JoinColumn(name: 'household_ulid', referencedColumnName: 'ulid', nullable: false)]
     private Household $household;
 
-    #[OneToMany(mappedBy: "contributor", targetEntity: Expense::class, cascade: ["persist" => "persist"])]
+    /** @var Collection<int,Expense> */
+    #[OneToMany(mappedBy: 'contributor', targetEntity: Expense::class, cascade: ['persist' => 'persist'])]
     private Collection $expenses;
 
     public function __construct(Household $household, NotEmptyName $name)
@@ -70,11 +71,13 @@ class Contributor
 
     public function getTotalSpent(): Amount
     {
-        return \array_reduce($this->expenses->toArray(),
-             static function (Amount $lastAmount, Expense $expense) {
+        return \array_reduce(
+            $this->expenses->toArray(),
+            static function (Amount $lastAmount, Expense $expense) {
                 return Amount::fromFloat($lastAmount->getValue() + $expense->getAmount()->getValue());
             },
-        Amount::fromFloat(0));
+            Amount::fromFloat(0)
+        );
     }
 
     public function registerNewExpense(Amount $amount, NotEmptyName $description, \DateTimeImmutable $registeredAt): void

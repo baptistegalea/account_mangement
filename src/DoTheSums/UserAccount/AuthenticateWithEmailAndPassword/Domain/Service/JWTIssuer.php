@@ -6,7 +6,7 @@ namespace App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Domain\Serv
 
 use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
 
-interface JWTIssuerInterface
+interface JWTIssuer
 {
     public function issueJWT(UserAccount $userAccount): string;
 }

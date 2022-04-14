@@ -27,5 +27,4 @@ final class AuthenticateWithEmailAndPassword
     {
         return $this->password;
     }
-
 }

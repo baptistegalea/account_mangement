@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\Shared\Infrastructure\Symfony\Security\Http\Authenticator;
 
-use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepositoryInterface;
+use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepository;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Email;
 use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
@@ -25,9 +25,9 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 final class JWTAuthenticator extends AbstractAuthenticator
 {
     private JWTAuthorizationHeaderExtractor $authorizationHeaderExtractor;
-    private UserAccountRepositoryInterface $userAccountRepository;
+    private UserAccountRepository $userAccountRepository;
 
-    public function __construct(JWTAuthorizationHeaderExtractor $authorizationHeaderExtractor, UserAccountRepositoryInterface $userAccountRepository)
+    public function __construct(JWTAuthorizationHeaderExtractor $authorizationHeaderExtractor, UserAccountRepository $userAccountRepository)
     {
         $this->authorizationHeaderExtractor = $authorizationHeaderExtractor;
         $this->userAccountRepository = $userAccountRepository;
@@ -42,6 +42,9 @@ final class JWTAuthenticator extends AbstractAuthenticator
     {
         $jwt = $this->authorizationHeaderExtractor->extract($request);
 
+        if ($jwt === null) {
+            throw new \Exception('JWT not found while authenticating');
+        }
         $configuration = Configuration::forSymmetricSigner(
             new Sha256(),
             InMemory::plainText('MySuperHashKey!!')

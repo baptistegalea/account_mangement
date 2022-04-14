@@ -24,17 +24,17 @@ class Expense
     #[CustomIdGenerator(class: 'doctrine.ulid_generator')]
     private Ulid $ulid;
 
-    #[Column(type: "amount", nullable: false, options: ["unsigned" => true])]
+    #[Column(type: 'amount', nullable: false, options: ['unsigned' => true])]
     private Amount $amount;
 
-    #[ManyToOne(targetEntity: Contributor::class, inversedBy: "expenses")]
-    #[JoinColumn(name: "contributor_ulid", referencedColumnName: "ulid", nullable: false)]
+    #[ManyToOne(targetEntity: Contributor::class, inversedBy: 'expenses')]
+    #[JoinColumn(name: 'contributor_ulid', referencedColumnName: 'ulid', nullable: false)]
     private Contributor $contributor;
 
-    #[Column(type: "datetime", nullable: false)]
+    #[Column(type: 'datetime', nullable: false)]
     private \DateTime $registeredAt;
 
-    #[Column(type: "not_empty_name", nullable: false)]
+    #[Column(type: 'not_empty_name', nullable: false)]
     private NotEmptyName $description;
 
     public function __construct(Contributor $payer, Amount $amount, NotEmptyName $description, \DateTimeImmutable $registeredAt)
@@ -59,5 +59,15 @@ class Expense
     public function getContributor(): Contributor
     {
         return $this->contributor;
+    }
+
+    public function getRegisteredAt(): \DateTime
+    {
+        return $this->registeredAt;
+    }
+
+    public function getDescription(): NotEmptyName
+    {
+        return $this->description;
     }
 }

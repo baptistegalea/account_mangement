@@ -23,11 +23,12 @@ final class RegisterExpenseController extends AbstractController
         $handler->handle(
             new RegisterExpense(
                 Ulid::fromString($householdUlid),
-                Ulid::fromString($registerExpenseInput->contributorUlid),
-                Amount::fromFloat($registerExpenseInput->amount),
-                NotEmptyName::fromString($registerExpenseInput->description),
+                Ulid::fromString($registerExpenseInput->getContributorUlid()),
+                Amount::fromFloat($registerExpenseInput->getAmount()),
+                NotEmptyName::fromString($registerExpenseInput->getDescription()),
                 new \DateTimeImmutable()
-            ));
+            )
+        );
 
         return new JsonResponse();
     }

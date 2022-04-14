@@ -12,18 +12,22 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Ulid;
 
-final class ValidateUserAccountCreationController extends  AbstractController
+final class ValidateUserAccountCreationController extends AbstractController
 {
     /**
      * @Route(path="/user-account-creation-requests/{ulid}/confirm", methods={"POST"})
      */
-    public function __invoke(string $ulid, ValidateUserAccountCreationHandler $handler, ValidateUserAccountCreationInput $requestUserAccountCreationInput): JsonResponse
-    {
+    public function __invoke(
+        string $ulid,
+        ValidateUserAccountCreationHandler $handler,
+        ValidateUserAccountCreationInput $requestUserAccountCreationInput
+    ): JsonResponse {
         $handler->handle(
             new ValidateUserAccountCreation(
                 Ulid::fromString($ulid),
-                OneTimePassword::fromString($requestUserAccountCreationInput->otp)
-            ));
+                OneTimePassword::fromString($requestUserAccountCreationInput->getOtp())
+            )
+        );
 
         return new JsonResponse();
     }

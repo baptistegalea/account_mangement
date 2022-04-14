@@ -21,7 +21,7 @@ final class OpenNewHouseholdController extends AbstractController
     {
         $handler->handle(
             new OpenNewHousehold(
-                NotEmptyName::fromString($input->name),
+                NotEmptyName::fromString($input->getName()),
                 $authUserAccountStorage->getAuthenticatedUserAccount()->getUlid()
             )
         );

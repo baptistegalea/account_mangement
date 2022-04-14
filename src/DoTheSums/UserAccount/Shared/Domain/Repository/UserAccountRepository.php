@@ -8,7 +8,7 @@ use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Email;
 use Symfony\Component\Uid\Ulid;
 
-interface UserAccountRepositoryInterface
+interface UserAccountRepository
 {
     public function getByUlid(Ulid $ulid): UserAccount;
 

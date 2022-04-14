@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\DoTheSums\UserAccount\Shared\Infrastructure\Repository;
 
 use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccountCreationRequest;
-use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountCreationRequestRepositoryInterface;
+use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountCreationRequestRepository as UserAccountCreationRequestRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Uid\Ulid;
 
@@ -21,7 +21,7 @@ final class UserAccountCreationRequestRepository implements UserAccountCreationR
     public function getByUlid(Ulid $ulid): UserAccountCreationRequest
     {
         $userAccountCreationRequest = $this->entityManager->getRepository(UserAccountCreationRequest::class)->findOneBy([
-            'ulid' => $ulid
+            'ulid' => $ulid,
         ]);
 
         if ($userAccountCreationRequest instanceof UserAccountCreationRequest === false) {

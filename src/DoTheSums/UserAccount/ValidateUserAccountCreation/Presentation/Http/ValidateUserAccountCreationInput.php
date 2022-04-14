@@ -6,5 +6,15 @@ namespace App\DoTheSums\UserAccount\ValidateUserAccountCreation\Presentation\Htt
 
 final class ValidateUserAccountCreationInput
 {
-    public string $otp;
+    private string $otp;
+
+    public function __construct(string $otp)
+    {
+        $this->otp = $otp;
+    }
+
+    public function getOtp(): string
+    {
+        return $this->otp;
+    }
 }

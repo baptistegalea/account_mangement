@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class JWTAuthorizationHeaderExtractor
 {
-
     /**
      * Returns the JWT from the Authorization header
      */
@@ -20,9 +19,13 @@ final class JWTAuthorizationHeaderExtractor
 
         $authorizationHeader = $request->headers->get('Authorization');
 
+        if ($authorizationHeader === null) {
+            throw new \Exception('Authorization Header not found');
+        }
+
         $headerParts = explode(' ', $authorizationHeader);
 
-        if (0 !== strcasecmp($headerParts[0], 'Bearer')) {
+        if (strcasecmp($headerParts[0], 'Bearer') !== 0) {
             return null;
         }
 
