@@ -37,12 +37,12 @@ class Expense
     #[Column(type: "not_empty_name", nullable: false)]
     private NotEmptyName $description;
 
-    public function __construct(Contributor $payer, Amount $amount, NotEmptyName $description)
+    public function __construct(Contributor $payer, Amount $amount, NotEmptyName $description, \DateTimeImmutable $registeredAt)
     {
         $this->ulid = new Ulid();
         $this->contributor = $payer;
         $this->amount = $amount;
-        $this->registeredAt = new \DateTime();
+        $this->registeredAt = \DateTime::createFromImmutable($registeredAt);
         $this->description = $description;
     }
 

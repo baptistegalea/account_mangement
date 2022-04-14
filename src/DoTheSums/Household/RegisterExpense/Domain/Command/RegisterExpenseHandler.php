@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\Household\RegisterExpense\Domain\Command;
 
-use App\DoTheSums\Household\Shared\Domain\Repository\ContributorRepositoryInterface;
+use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepositoryInterface;
 
 final class RegisterExpenseHandler
 {
-    private ContributorRepositoryInterface $contributorRepository;
+    private HouseholdRepositoryInterface $householdRepository;
 
-    public function __construct(ContributorRepositoryInterface $contributorRepository)
+    public function __construct(HouseholdRepositoryInterface $householdRepository)
     {
-        $this->contributorRepository = $contributorRepository;
+        $this->householdRepository = $householdRepository;
     }
 
     public function handle(RegisterExpense $command): void
     {
-        $contributor = $this->contributorRepository->getByUlid($command->getContributorUlid());
+        $household = $this->householdRepository->getByUlid($command->getHouseholdUlid());
 
-        $contributor->registerNewExpense($command->getAmount(), $command->getDescription());
+        $household->registerExpense($command->getContributorUlid(), $command->getAmount(), $command->getDescription(), $command->getRegisteredAt());
 
-        $this->contributorRepository->save($contributor);
+        $this->householdRepository->save($household);
     }
 }

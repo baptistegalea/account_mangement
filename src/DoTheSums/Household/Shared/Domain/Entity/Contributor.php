@@ -77,10 +77,8 @@ class Contributor
         Amount::fromFloat(0));
     }
 
-    public function registerNewExpense(Amount $amount, NotEmptyName $description): self
+    public function registerNewExpense(Amount $amount, NotEmptyName $description, \DateTimeImmutable $registeredAt): void
     {
-        $this->expenses->add(new Expense($this, $amount, $description));
-
-        return $this;
+        $this->expenses->add(new Expense($this, $amount, $description, $registeredAt));
     }
 }

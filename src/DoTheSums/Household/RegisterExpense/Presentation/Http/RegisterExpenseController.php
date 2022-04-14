@@ -16,15 +16,17 @@ use Symfony\Component\Uid\Ulid;
 final class RegisterExpenseController extends AbstractController
 {
     /**
-     * @Route(path="/expenses", methods={"POST"})
+     * @Route(path="/households/{householdUlid}/expenses", methods={"POST"})
      */
-    public function __invoke(RegisterExpenseHandler $handler, RegisterExpensePayloadInput $registerExpenseInput): JsonResponse
+    public function __invoke(RegisterExpenseHandler $handler, string $householdUlid, RegisterExpensePayloadInput $registerExpenseInput): JsonResponse
     {
         $handler->handle(
             new RegisterExpense(
+                Ulid::fromString($householdUlid),
                 Ulid::fromString($registerExpenseInput->contributorUlid),
                 Amount::fromFloat($registerExpenseInput->amount),
-                NotEmptyName::fromString($registerExpenseInput->description)
+                NotEmptyName::fromString($registerExpenseInput->description),
+                new \DateTimeImmutable()
             ));
 
         return new JsonResponse();

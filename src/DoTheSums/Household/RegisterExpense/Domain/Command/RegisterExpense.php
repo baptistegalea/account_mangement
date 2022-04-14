@@ -13,12 +13,21 @@ final class RegisterExpense
     private Ulid $contributorUlid;
     private Amount $amount;
     private NotEmptyName $description;
+    private \DateTimeImmutable $registeredAt;
+    private Ulid $householdUlid;
 
-    public function __construct(Ulid $contributorUlid, Amount $amount, NotEmptyName $description)
+    public function __construct(Ulid $householdUlid, Ulid $contributorUlid, Amount $amount, NotEmptyName $description, \DateTimeImmutable $registeredAt)
     {
         $this->contributorUlid = $contributorUlid;
         $this->amount = $amount;
         $this->description = $description;
+        $this->registeredAt = $registeredAt;
+        $this->householdUlid = $householdUlid;
+    }
+
+    public function getHouseholdUlid(): Ulid
+    {
+        return $this->householdUlid;
     }
 
     public function getContributorUlid(): Ulid
@@ -34,5 +43,10 @@ final class RegisterExpense
     public function getDescription(): NotEmptyName
     {
         return $this->description;
+    }
+
+    public function getRegisteredAt(): \DateTimeImmutable
+    {
+        return $this->registeredAt;
     }
 }

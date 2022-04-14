@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\Household\OpenNewHousehold\Domain\Command;
 
-use App\DoTheSums\Household\Shared\Domain\Entity\Household;
 use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepositoryInterface;
 use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepositoryInterface;
-use Symfony\Component\Uid\Ulid;
 
 final class OpenNewHouseholdHandler
 {

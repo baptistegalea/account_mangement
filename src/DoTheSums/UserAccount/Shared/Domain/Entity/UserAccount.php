@@ -61,7 +61,7 @@ class UserAccount
 
     public function createNewHousehold(NotEmptyName $householdName): Household
     {
-        return Household::openNewHouseHold($householdName, $this);
+        return Household::create($householdName, $this);
     }
 
     public function getUlid(): Ulid

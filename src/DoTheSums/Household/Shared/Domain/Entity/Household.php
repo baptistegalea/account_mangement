@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\Household\Shared\Domain\Entity;
 
+use App\DoTheSums\Household\Shared\Domain\ValueObject\Amount;
 use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
 use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -50,7 +51,7 @@ class Household
         );
     }
 
-    public static function openNewHouseHold(NotEmptyName $name, UserAccount $creator): self
+    public static function create(NotEmptyName $name, UserAccount $creator): self
     {
         return new self($name, $creator);
     }
@@ -71,6 +72,25 @@ class Household
     public function getContributors(): array
     {
         return $this->contributors->toArray();
+    }
+
+    private function getContributor(Ulid $contributorUlid): Contributor
+    {
+        $results = $this->contributors->filter(
+            static fn(Contributor $contributor): bool => $contributor->getUlid()->equals($contributorUlid)
+        );
+
+        if ($results->first() instanceof Contributor === false) {
+            throw new \Exception('Contributor does not exist in this household');
+        }
+
+        return $results->first();
+    }
+
+    public function registerExpense(Ulid $contributorUlid, Amount $amount, NotEmptyName $description, \DateTimeImmutable $registeredAt): void
+    {
+        $contributor = $this->getContributor($contributorUlid);
+        $contributor->registerNewExpense($amount, $description, $registeredAt);
     }
 
     public function getBalance(): array
