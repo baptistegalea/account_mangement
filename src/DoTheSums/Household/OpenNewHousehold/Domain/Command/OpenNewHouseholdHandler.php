@@ -6,25 +6,25 @@ namespace App\DoTheSums\Household\OpenNewHousehold\Domain\Command;
 
 use App\DoTheSums\Household\Shared\Domain\Entity\Household;
 use App\DoTheSums\Household\Shared\Domain\Repository\HouseholdRepositoryInterface;
+use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepositoryInterface;
 use Symfony\Component\Uid\Ulid;
 
 final class OpenNewHouseholdHandler
 {
     private HouseholdRepositoryInterface $householdRepository;
+    private UserAccountRepositoryInterface $userAccountRepository;
 
-    public function __construct(HouseholdRepositoryInterface $householdRepository)
+    public function __construct(HouseholdRepositoryInterface $householdRepository, UserAccountRepositoryInterface $userAccountRepository)
     {
         $this->householdRepository = $householdRepository;
+        $this->userAccountRepository = $userAccountRepository;
     }
 
     public function handle(OpenNewHousehold $command): void
     {
-        $newHousehold = new Household(
-            new Ulid(),
-            $command->getHouseholdName(),
-            $command->getFirstContributorName(),
-            $command->getSecondContributorName()
-        );
+        $creator = $this->userAccountRepository->getByUlid($command->getUserAccountCreatorUlid());
+
+        $newHousehold = $creator->createNewHousehold($command->getHouseholdName());
 
         $this->householdRepository->save($newHousehold);
     }

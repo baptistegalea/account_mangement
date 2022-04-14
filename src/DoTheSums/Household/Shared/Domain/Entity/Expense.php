@@ -27,7 +27,7 @@ class Expense
     #[Column(type: "amount", nullable: false, options: ["unsigned" => true])]
     private Amount $amount;
 
-    #[ManyToOne(targetEntity: "Contributor", inversedBy: "expenses")]
+    #[ManyToOne(targetEntity: Contributor::class, inversedBy: "expenses")]
     #[JoinColumn(name: "contributor_ulid", referencedColumnName: "ulid", nullable: false)]
     private Contributor $contributor;
 

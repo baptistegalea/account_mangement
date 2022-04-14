@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\UserAccount\Shared\Domain\Entity;
 
+use App\DoTheSums\Household\Shared\Domain\Entity\Household;
 use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Email;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Salt;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\CustomIdGenerator;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Component\Uid\Ulid;
 
 #[Entity]
@@ -38,6 +41,9 @@ class UserAccount
     #[Column(type: "datetime", nullable: false)]
     private \DateTime $registeredAt;
 
+    #[OneToMany(mappedBy: "creator", targetEntity: Household::class)]
+    private Collection $households;
+
     private function __construct(Email $email, string $hashedPassword, Salt $salt, NotEmptyName $name, \DateTimeImmutable $registeredAt)
     {
         $this->ulid = new Ulid();
@@ -53,6 +59,16 @@ class UserAccount
         return new self($accountCreationRequest->getEmail(), $accountCreationRequest->getHashedPassword(), $accountCreationRequest->getSalt(), $accountCreationRequest->getName(), $registeredAt);
     }
 
+    public function createNewHousehold(NotEmptyName $householdName): Household
+    {
+        return Household::openNewHouseHold($householdName, $this);
+    }
+
+    public function getUlid(): Ulid
+    {
+        return $this->ulid;
+    }
+
     public function getHashedPassword(): string
     {
         return $this->hashedPassword;
@@ -66,5 +82,10 @@ class UserAccount
     public function getEmail(): Email
     {
         return $this->email;
+    }
+
+    public function getName(): NotEmptyName
+    {
+        return $this->name;
     }
 }

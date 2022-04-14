@@ -27,19 +27,19 @@ class Contributor
     #[CustomIdGenerator(class: 'doctrine.ulid_generator')]
     private Ulid $ulid;
 
-    #[Column(type: "not_empty_name", nullable: false)]
+    #[Column(type: "not_empty_name", length: 255, nullable: false)]
     private NotEmptyName $name;
 
-    #[ManyToOne(targetEntity: "Household", inversedBy: "contributors")]
+    #[ManyToOne(targetEntity: Household::class, inversedBy: "contributors")]
     #[JoinColumn(name: "household_ulid", referencedColumnName: "ulid", nullable: false)]
     private Household $household;
 
-    #[OneToMany(mappedBy: "contributor", targetEntity: "Expense", cascade: ["persist" => "persist"])]
+    #[OneToMany(mappedBy: "contributor", targetEntity: Expense::class, cascade: ["persist" => "persist"])]
     private Collection $expenses;
 
-    public function __construct(Ulid $ulid, Household $household, NotEmptyName $name)
+    public function __construct(Household $household, NotEmptyName $name)
     {
-        $this->ulid = $ulid;
+        $this->ulid = new Ulid();
         $this->household = $household;
         $this->name = $name;
         $this->expenses = new ArrayCollection();

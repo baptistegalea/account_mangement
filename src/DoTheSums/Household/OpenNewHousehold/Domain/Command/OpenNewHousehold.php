@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace App\DoTheSums\Household\OpenNewHousehold\Domain\Command;
 
 use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
+use Symfony\Component\Uid\Ulid;
 
 final class OpenNewHousehold
 {
     private NotEmptyName $householdName;
-    private NotEmptyName $firstContributorName;
-    private NotEmptyName $secondContributorName;
+    private Ulid $userAccountCreatorUlid;
 
-    public function __construct(NotEmptyName $householdName, NotEmptyName $firstContributorName, NotEmptyName $secondContributorName)
+    public function __construct(NotEmptyName $householdName, Ulid $userAccountCreatorUlid)
     {
-        $this->secondContributorName = $secondContributorName;
-        $this->firstContributorName = $firstContributorName;
         $this->householdName = $householdName;
+        $this->userAccountCreatorUlid = $userAccountCreatorUlid;
     }
 
     public function getHouseholdName(): NotEmptyName
@@ -24,13 +23,8 @@ final class OpenNewHousehold
         return $this->householdName;
     }
 
-    public function getFirstContributorName(): NotEmptyName
+    public function getUserAccountCreatorUlid(): Ulid
     {
-        return $this->firstContributorName;
-    }
-
-    public function getSecondContributorName(): NotEmptyName
-    {
-        return $this->secondContributorName;
+        return $this->userAccountCreatorUlid;
     }
 }

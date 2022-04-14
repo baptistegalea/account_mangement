@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DoTheSums\Household\Shared\Domain\Entity;
 
 use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
+use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
@@ -12,6 +13,8 @@ use Doctrine\ORM\Mapping\CustomIdGenerator;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Component\Uid\Ulid;
 
@@ -27,24 +30,29 @@ class Household
     #[Column(type: "not_empty_name", nullable: false)]
     private NotEmptyName $name;
 
-    #[OneToMany(mappedBy: "household", targetEntity: "Contributor", cascade: ["persist" => "persist"])]
+    #[OneToMany(mappedBy: "household", targetEntity: Contributor::class, cascade: ["persist" => "persist"])]
     private Collection $contributors;
 
-    public function __construct(Ulid $ulid, NotEmptyName $name, NotEmptyName $firtContributorName, NotEmptyName $secondContributorName)
-    {
-        $this->ulid = $ulid;
-        $this->name = $name;
+    #[ManyToOne(targetEntity: UserAccount::class, inversedBy: "households")]
+    #[JoinColumn(name: "creator_ulid", referencedColumnName: "ulid", nullable: false)]
+    private UserAccount $creator;
 
-        if ($firtContributorName->equals($secondContributorName)) {
-            throw new \InvalidArgumentException('Both contributors must have a different name');
-        }
+    private function __construct(NotEmptyName $name, UserAccount $creator)
+    {
+        $this->ulid = new Ulid();
+        $this->name = $name;
+        $this->creator = $creator;
 
         $this->contributors = new ArrayCollection(
             [
-                new Contributor(new Ulid(), $this, $firtContributorName),
-                new Contributor(new Ulid(), $this, $secondContributorName),
+                new Contributor($this, $creator->getName()),
             ]
         );
+    }
+
+    public static function openNewHouseHold(NotEmptyName $name, UserAccount $creator): self
+    {
+        return new self($name, $creator);
     }
 
     public function getUlid(): Ulid
