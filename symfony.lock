@@ -128,6 +128,9 @@
     "league/container": {
         "version": "4.2.0"
     },
+    "maglnet/composer-require-checker": {
+        "version": "4.0.0"
+    },
     "nikic/php-parser": {
         "version": "v4.13.2"
     },
@@ -390,5 +393,11 @@
     },
     "symfony/yaml": {
         "version": "v6.0.3"
+    },
+    "webmozart/assert": {
+        "version": "1.10.0"
+    },
+    "webmozart/glob": {
+        "version": "4.5.0"
     }
 }

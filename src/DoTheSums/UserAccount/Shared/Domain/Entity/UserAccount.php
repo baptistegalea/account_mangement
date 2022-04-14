@@ -8,6 +8,7 @@ use App\DoTheSums\Household\Shared\Domain\Entity\Household;
 use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Email;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Salt;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\CustomIdGenerator;
@@ -42,7 +43,7 @@ class UserAccount
     private \DateTime $registeredAt;
 
     /** @var Collection<int,Household> */
-    #[OneToMany(mappedBy: 'creator', targetEntity: Household::class)]
+    #[OneToMany(mappedBy: 'creator', targetEntity: Household::class, cascade: ['persist' => 'persist'])]
     private Collection $households;
 
     private function __construct(Email $email, string $hashedPassword, Salt $salt, NotEmptyName $name, \DateTimeImmutable $registeredAt)
@@ -53,6 +54,7 @@ class UserAccount
         $this->name = $name;
         $this->registeredAt = \DateTime::createFromImmutable($registeredAt);
         $this->salt = $salt;
+        $this->households = new ArrayCollection();
     }
 
     public static function fromUserAccountCreationRequest(UserAccountCreationRequest $accountCreationRequest, \DateTimeImmutable $registeredAt): self
@@ -60,9 +62,9 @@ class UserAccount
         return new self($accountCreationRequest->getEmail(), $accountCreationRequest->getHashedPassword(), $accountCreationRequest->getSalt(), $accountCreationRequest->getName(), $registeredAt);
     }
 
-    public function createNewHousehold(NotEmptyName $householdName): Household
+    public function createNewHousehold(NotEmptyName $householdName): void
     {
-        return Household::create($householdName, $this);
+        $this->households->add(Household::create($householdName, $this));
     }
 
     public function getUlid(): Ulid

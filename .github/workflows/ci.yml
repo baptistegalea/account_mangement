@@ -31,6 +31,8 @@ jobs:
               run: curl http://localhost
             - name: Check HTTPS reachability
               run: curl -k https://localhost
+            - run: docker-compose exec -T php composer validate
             - run: docker-compose exec -T php composer install --prefer-dist --no-progress --no-suggest --no-interaction
+            - run: docker-compose exec -T php vendor/bin/composer-require-checker
             - run: docker-compose exec -T php vendor/bin/phpinsights -n --ansi --format=github-action
             - run: docker-compose exec -T php vendor/bin/phpstan --level=8 analyse src
