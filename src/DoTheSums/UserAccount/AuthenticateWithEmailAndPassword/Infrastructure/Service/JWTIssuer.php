@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Infrastructure\Service;
 
 use App\DoTheSums\UserAccount\AuthenticateWithEmailAndPassword\Domain\Service\JWTIssuer as JWTIssuerInterface;
-use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
+use App\DoTheSums\Shared\Domain\Entity\UserAccount;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;

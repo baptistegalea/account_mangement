@@ -6,7 +6,7 @@ namespace App\DoTheSums\Household\Shared\Domain\Entity;
 
 use App\DoTheSums\Household\Shared\Domain\ValueObject\Amount;
 use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
-use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
+use App\DoTheSums\Shared\Domain\Entity\UserAccount;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;

@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\DoTheSums\UserAccount\Shared\Domain\Entity;
+namespace App\DoTheSums\Shared\Domain\Entity;
 
 use App\DoTheSums\Household\Shared\Domain\Entity\Household;
 use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
+use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccountCreationRequest;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Email;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Salt;
 use Doctrine\Common\Collections\ArrayCollection;

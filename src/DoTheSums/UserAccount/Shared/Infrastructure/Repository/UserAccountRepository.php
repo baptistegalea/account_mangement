@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\UserAccount\Shared\Infrastructure\Repository;
 
-use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
+use App\DoTheSums\Shared\Domain\Entity\UserAccount;
 use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepository as UserAccountRepositoryInterface;
 use App\DoTheSums\UserAccount\Shared\Domain\ValueObject\Email;
 use Doctrine\ORM\EntityManagerInterface;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\DoTheSums\UserAccount\Shared\Infrastructure\Symfony\Security;
 
 use App\DoTheSums\Shared\Infrastructure\Symfony\Security\Http\Authenticator\User;
-use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
+use App\DoTheSums\Shared\Domain\Entity\UserAccount;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 final class AuthUserAccountStorage

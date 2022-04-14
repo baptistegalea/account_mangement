@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\UserAccount\ValidateUserAccountCreation\Domain\Command;
 
-use App\DoTheSums\UserAccount\Shared\Domain\Entity\UserAccount;
+use App\DoTheSums\Shared\Domain\Entity\UserAccount;
 use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountCreationRequestRepository;
 use App\DoTheSums\UserAccount\Shared\Domain\Repository\UserAccountRepository;
 
