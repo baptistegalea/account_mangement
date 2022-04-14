@@ -9,8 +9,9 @@ jobs:
         name: Docker build
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
+            - uses: actions/checkout@v2
+              with:
+                  php-version: 8.0
             - uses: shivammathur/setup-php@v2
             - name: Pull images
               run: docker-compose pull
@@ -30,9 +31,6 @@ jobs:
               run: curl http://localhost
             - name: Check HTTPS reachability
               run: curl -k https://localhost
-            - uses: actions/checkout@v2
-              with:
-                  php-version: 8.0
             - run: composer install --prefer-dist --no-progress --no-suggest
             - run: vendor/bin/phpinsights -n --ansi --format=github-action
             - run: vendor/bin/phpstan --level=8 analyse src
