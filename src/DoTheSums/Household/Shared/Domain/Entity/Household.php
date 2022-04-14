@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\DoTheSums\Household\Shared\Domain\Entity;
 
+use App\DoTheSums\Household\GetRefundProposals\Domain\Creditor;
+use App\DoTheSums\Household\GetRefundProposals\Domain\Debtor;
+use App\DoTheSums\Household\GetRefundProposals\Domain\ValueObject\BalanceAmount;
 use App\DoTheSums\Household\Shared\Domain\ValueObject\Amount;
 use App\DoTheSums\Shared\Domain\Entity\UserAccount;
 use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
@@ -31,7 +34,7 @@ class Household
     #[Column(type: 'not_empty_name', nullable: false)]
     private NotEmptyName $name;
 
-    /** @var Collection<int,Contributor>  */
+    /** @var Collection<int,Contributor> */
     #[OneToMany(mappedBy: 'household', targetEntity: Contributor::class, cascade: ['persist' => 'persist'])]
     private Collection $contributors;
 
@@ -75,6 +78,11 @@ class Household
         return $this->contributors->toArray();
     }
 
+    public function getCreator(): UserAccount
+    {
+        return $this->creator;
+    }
+
     public function registerExpense(Ulid $contributorUlid, Amount $amount, NotEmptyName $description, \DateTimeImmutable $registeredAt): void
     {
         $contributor = $this->getContributor($contributorUlid);
@@ -84,7 +92,7 @@ class Household
     public function addContributor(NotEmptyName $contributorName): void
     {
         $isContributorExists = $this->contributors->exists(
-            static fn (int $key, Contributor $contributor): bool => $contributor->getName()->equals($contributorName)
+            static fn(int $key, Contributor $contributor): bool => $contributor->getName()->equals($contributorName)
         );
 
         if ($isContributorExists === true) {
@@ -96,38 +104,64 @@ class Household
         );
     }
 
-    /**
-     * @return array<string, float>
-     */
-    public function getBalance(): array
+    public function getTotalSpent(): Amount
     {
-        /** @var Contributor $firstContributor */
-        $firstContributor = $this->contributors->first();
-        /** @var Contributor $secondContributor */
-        $secondContributor = $this->contributors->last();
-
-        $totalSpent = $firstContributor->getTotalSpent()->getValue() + $secondContributor->getTotalSpent()->getValue();
-
-        $supposedAmountSpent = $totalSpent / 2;
-
-        $firstContributorBalance = $supposedAmountSpent - $firstContributor->getTotalSpent()->getValue();
-        $secondContributorBalance = $supposedAmountSpent - $secondContributor->getTotalSpent()->getValue();
-
-        return [
-            'firstContributorDebt' => $firstContributorBalance > 0 ? $firstContributorBalance : 0,
-            'secondContributorDebt' => $secondContributorBalance > 0 ? $secondContributorBalance : 0,
-        ];
+        return \array_reduce(
+            $this->contributors->toArray(),
+            static function (Amount $lastAmount, Contributor $contributor) {
+                return Amount::fromFloat($lastAmount->getValue() + $contributor->getTotalSpent()->getValue());
+            },
+            Amount::fromFloat(0)
+        );
     }
 
-    public function getCreator(): UserAccount
+    private function getSupposedAmountSpentByContributor(): Amount
     {
-        return $this->creator;
+        $totalSpent = $this->getTotalSpent();
+
+        return Amount::fromFloat($totalSpent->getValue() / $this->contributors->count());
+    }
+
+    /**
+     * @return array<Debtor>
+     */
+    public function getDebtors(): array
+    {
+        $supposedAmountSpentByContributor = $this->getSupposedAmountSpentByContributor();
+
+        $debtors = [];
+        foreach ($this->contributors as $contributor) {
+            $balance = BalanceAmount::fromFloat($contributor->getTotalSpent()->getValue() - $supposedAmountSpentByContributor->getValue());
+
+            if ($balance->isNegative() === true) {
+                $debtors[] = new Debtor($contributor->getName(), $balance->toPositive());
+            }
+        }
+        return $debtors;
+    }
+
+    /**
+     * @return array<Creditor>
+     */
+    public function getCreditors(): array
+    {
+        $supposedAmountSpentByContributor = $this->getSupposedAmountSpentByContributor();
+
+        $creditors = [];
+        foreach ($this->contributors as $contributor) {
+            $balance = BalanceAmount::fromFloat($contributor->getTotalSpent()->getValue() - $supposedAmountSpentByContributor->getValue());
+
+            if ($balance->isPositive() === true) {
+                $creditors[] = new Creditor($contributor->getName(), $balance->toPositive());
+            }
+        }
+        return $creditors;
     }
 
     private function getContributor(Ulid $contributorUlid): Contributor
     {
         $results = $this->contributors->filter(
-            static fn (Contributor $contributor): bool => $contributor->getUlid()->equals($contributorUlid)
+            static fn(Contributor $contributor): bool => $contributor->getUlid()->equals($contributorUlid)
         );
 
         if ($results->first() instanceof Contributor === false) {
@@ -135,5 +169,22 @@ class Household
         }
 
         return $results->first();
+    }
+
+    public function getBalance(): array
+    {
+        $totalSpent = $this->getTotalSpent();
+
+        $supposedAmountSpentByContributor = Amount::fromFloat($totalSpent->getValue() / $this->contributors->count());
+
+        $balance = [];
+
+        foreach ($this->contributors as $contributor) {
+            $balance[] = [
+                'contributor' => $contributor->getName(),
+                'balance' => BalanceAmount::fromFloat($supposedAmountSpentByContributor->getValue() - $contributor->getTotalSpent()->getValue()),
+            ];
+        }
+        return $balance;
     }
 }

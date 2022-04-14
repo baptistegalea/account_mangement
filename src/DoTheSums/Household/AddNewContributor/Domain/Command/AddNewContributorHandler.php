@@ -20,5 +20,7 @@ final class AddNewContributorHandler
         $household = $this->householdRepository->getByUlid($command->getHouseholdUlid());
 
         $household->addContributor($command->getName());
+
+        $this->householdRepository->save($household);
     }
 }
