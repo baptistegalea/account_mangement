@@ -60,27 +60,12 @@ class Household
         return new self($name, $creator);
     }
 
-    public function getUlid(): Ulid
-    {
-        return $this->ulid;
-    }
-
-    public function getName(): NotEmptyName
-    {
-        return $this->name;
-    }
-
     /**
      * @return array<Contributor>
      */
     public function getContributors(): array
     {
         return $this->contributors->toArray();
-    }
-
-    public function getCreator(): UserAccount
-    {
-        return $this->creator;
     }
 
     public function registerExpense(Ulid $contributorUlid, Amount $amount, NotEmptyName $description, \DateTimeImmutable $registeredAt): void
@@ -104,24 +89,6 @@ class Household
         );
     }
 
-    public function getTotalSpent(): Amount
-    {
-        return \array_reduce(
-            $this->contributors->toArray(),
-            static function (Amount $lastAmount, Contributor $contributor) {
-                return Amount::fromFloat($lastAmount->getValue() + $contributor->getTotalSpent()->getValue());
-            },
-            Amount::fromFloat(0)
-        );
-    }
-
-    private function getSupposedAmountSpentByContributor(): Amount
-    {
-        $totalSpent = $this->getTotalSpent();
-
-        return Amount::fromFloat($totalSpent->getValue() / $this->contributors->count());
-    }
-
     /**
      * @return array<Debtor>
      */
@@ -131,7 +98,10 @@ class Household
 
         $debtors = [];
         foreach ($this->contributors as $contributor) {
-            $balance = BalanceAmount::fromFloat($contributor->getTotalSpent()->getValue() - $supposedAmountSpentByContributor->getValue());
+            $balance = BalanceAmount::fromFloat(
+                $contributor->getSpentBalance()->getValue()
+                - $supposedAmountSpentByContributor->getValue()
+            );
 
             if ($balance->isNegative() === true) {
                 $debtors[] = new Debtor($contributor->getName(), $balance->toPositive());
@@ -149,8 +119,10 @@ class Household
 
         $creditors = [];
         foreach ($this->contributors as $contributor) {
-            $balance = BalanceAmount::fromFloat($contributor->getTotalSpent()->getValue() - $supposedAmountSpentByContributor->getValue());
-
+            $balance = BalanceAmount::fromFloat(
+                $contributor->getSpentBalance()->getValue()
+                - $supposedAmountSpentByContributor->getValue()
+            );
             if ($balance->isPositive() === true) {
                 $creditors[] = new Creditor($contributor->getName(), $balance->toPositive());
             }
@@ -158,7 +130,7 @@ class Household
         return $creditors;
     }
 
-    private function getContributor(Ulid $contributorUlid): Contributor
+    public function getContributor(Ulid $contributorUlid): Contributor
     {
         $results = $this->contributors->filter(
             static fn(Contributor $contributor): bool => $contributor->getUlid()->equals($contributorUlid)
@@ -171,20 +143,16 @@ class Household
         return $results->first();
     }
 
-    public function getBalance(): array
+    private function getSupposedAmountSpentByContributor(): Amount
     {
-        $totalSpent = $this->getTotalSpent();
+        $totalSpent = \array_reduce(
+            $this->contributors->toArray(),
+            static function (Amount $lastAmount, Contributor $contributor) {
+                return Amount::fromFloat($lastAmount->getValue() + $contributor->getTotalSpent()->getValue());
+            },
+            Amount::fromFloat(0)
+        );
 
-        $supposedAmountSpentByContributor = Amount::fromFloat($totalSpent->getValue() / $this->contributors->count());
-
-        $balance = [];
-
-        foreach ($this->contributors as $contributor) {
-            $balance[] = [
-                'contributor' => $contributor->getName(),
-                'balance' => BalanceAmount::fromFloat($supposedAmountSpentByContributor->getValue() - $contributor->getTotalSpent()->getValue()),
-            ];
-        }
-        return $balance;
+        return Amount::fromFloat($totalSpent->getValue() / $this->contributors->count());
     }
 }

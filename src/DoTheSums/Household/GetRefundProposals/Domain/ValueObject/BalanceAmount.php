@@ -15,7 +15,7 @@ final class BalanceAmount
 
     public static function fromFloat(float $amount): self
     {
-        return new self($amount);
+        return new self(round($amount, 2));
     }
 
     public function rounded(): float

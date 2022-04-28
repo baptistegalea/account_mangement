@@ -19,7 +19,7 @@ final class Amount
             throw new \InvalidArgumentException('An amount must be positive');
         }
 
-        return new self($amount);
+        return new self(round($amount, 2));
     }
 
     public function getValue(): float

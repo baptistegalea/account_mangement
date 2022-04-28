@@ -38,12 +38,22 @@ class Contributor
     #[OneToMany(mappedBy: 'contributor', targetEntity: Expense::class, cascade: ['persist' => 'persist'])]
     private Collection $expenses;
 
+    /** @var Collection<int,Refund> */
+    #[OneToMany(mappedBy: 'contributor', targetEntity: Refund::class, cascade: ['persist' => 'persist'])]
+    private Collection $refunds;
+
+    /** @var Collection<int,Refund> */
+    #[OneToMany(mappedBy: 'recipient', targetEntity: Refund::class)]
+    private Collection $incomingRefunds;
+
     public function __construct(Household $household, NotEmptyName $name)
     {
         $this->ulid = new Ulid();
         $this->household = $household;
         $this->name = $name;
         $this->expenses = new ArrayCollection();
+        $this->refunds = new ArrayCollection();
+        $this->incomingRefunds = new ArrayCollection();
     }
 
     public function getUlid(): Ulid
@@ -80,8 +90,51 @@ class Contributor
         );
     }
 
+    /**
+     * Returns the balance for this contributor.
+     * A negative result means the contributor has received more than he gives/spent
+     * A positive result means the contributor has givend/spent more than he received
+     */
+    public function getSpentBalance(): Amount
+    {
+        return Amount::fromFloat(
+            $this->getTotalSpent()->getValue()
+            + $this->getTotalRefundSent()->getValue()
+            - $this->getTotalRefundReceived()->getValue()
+        );
+    }
+
+    private function getTotalRefundSent(): Amount
+    {
+        return \array_reduce(
+            $this->refunds->toArray(),
+            static function (Amount $lastAmount, Refund $refund) {
+                return Amount::fromFloat($lastAmount->getValue() + $refund->getAmount()->getValue());
+            },
+            Amount::fromFloat(0)
+        );
+    }
+
+    private function getTotalRefundReceived(): Amount
+    {
+        return \array_reduce(
+            $this->incomingRefunds->toArray(),
+            static function (Amount $lastAmount, Refund $refund) {
+                return Amount::fromFloat($lastAmount->getValue() + $refund->getAmount()->getValue());
+            },
+            Amount::fromFloat(0)
+        );
+    }
+
     public function registerNewExpense(Amount $amount, NotEmptyName $description, \DateTimeImmutable $registeredAt): void
     {
         $this->expenses->add(new Expense($this, $amount, $description, $registeredAt));
+    }
+
+    public function refund(Contributor $recipient, Amount $amount): void
+    {
+        $this->refunds->add(
+            new Refund($this, $recipient, $amount)
+        );
     }
 }

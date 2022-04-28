@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\DoTheSums\Household\Shared\Domain\Entity;
 
 use App\DoTheSums\Household\Shared\Domain\ValueObject\Amount;
-use App\DoTheSums\Shared\Domain\ValueObject\NotEmptyName;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\CustomIdGenerator;
 use Doctrine\ORM\Mapping\Entity;
@@ -16,7 +15,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\Uid\Ulid;
 
 #[Entity]
-class Expense
+class Refund
 {
     #[Id]
     #[Column(type: 'ulid', unique: true)]
@@ -24,26 +23,23 @@ class Expense
     #[CustomIdGenerator(class: 'doctrine.ulid_generator')]
     private Ulid $ulid;
 
-    #[Column(type: 'amount', nullable: false, options: ['unsigned' => true])]
-    private Amount $amount;
-
-    #[ManyToOne(targetEntity: Contributor::class, inversedBy: 'expenses')]
+    #[ManyToOne(targetEntity: Contributor::class, inversedBy: 'refunds')]
     #[JoinColumn(name: 'contributor_ulid', referencedColumnName: 'ulid', nullable: false)]
     private Contributor $contributor;
 
-    #[Column(type: 'datetime', nullable: false)]
-    private \DateTime $registeredAt;
+    #[ManyToOne(targetEntity: Contributor::class, inversedBy: 'incomingRefunds')]
+    #[JoinColumn(name: 'recipient_ulid', referencedColumnName: 'ulid', nullable: false)]
+    private Contributor $recipient;
 
-    #[Column(type: 'not_empty_name', nullable: false)]
-    private NotEmptyName $description;
+    #[Column(type: 'amount', nullable: false, options: ['unsigned' => true])]
+    private Amount $amount;
 
-    public function __construct(Contributor $payer, Amount $amount, NotEmptyName $description, \DateTimeImmutable $registeredAt)
+    public function __construct(Contributor $contributor, Contributor $recipient, Amount $amount)
     {
         $this->ulid = new Ulid();
-        $this->contributor = $payer;
+        $this->contributor = $contributor;
+        $this->recipient = $recipient;
         $this->amount = $amount;
-        $this->registeredAt = \DateTime::createFromImmutable($registeredAt);
-        $this->description = $description;
     }
 
     public function getAmount(): Amount
